@@ -25,17 +25,12 @@ public class LogstashSocketAppenderFactory extends AbstractLogstashAppenderFacto
     appender.setHost(host);
     appender.setPort(port);
 
-    appender.setIncludeCallerInfo(includeCallerInfo);
-    appender.setIncludeMdc(includeMdc);
+    appender.setIncludeCallerData(includeCallerInfo);
     appender.setIncludeContext(includeContext);
+    appender.setIncludeMdc(includeMdc);
 
     if (customFields != null) {
-      try {
-        String custom = LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields);
-        appender.setCustomFields(custom);
-      } catch (IOException e) {
-        System.out.println("unable to parse customFields: "+e.getMessage());
-      }
+      appender.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields, applicationName));
     }
 
     if (fieldNames != null) {

@@ -51,21 +51,16 @@ public class LogstashTcpAppenderFactory extends AbstractLogstashAppenderFactory 
 
     appender.setName("logstash-tcp-appender");
     appender.setContext(context);
-    appender.setRemoteHost(host);
-    appender.setPort(port);
+    appender.addDestination(host + ":" + Integer.toString(port));
     appender.setIncludeCallerData(includeCallerData);
     appender.setQueueSize(queueSize);
 
+    encoder.setIncludeCallerData(includeCallerInfo);
     encoder.setIncludeContext(includeContext);
     encoder.setIncludeMdc(includeMdc);
-    encoder.setIncludeCallerInfo(includeCallerInfo);
+
     if (customFields != null) {
-      try {
-        String custom = LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields);
-        encoder.setCustomFields(custom);
-      } catch (IOException e) {
-        System.out.println("unable to parse customFields: "+e.getMessage());
-      }
+      encoder.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields, applicationName));
     }
 
     if (fieldNames != null) {

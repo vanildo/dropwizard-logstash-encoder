@@ -1,5 +1,6 @@
 package com.wikia.dropwizard.logstash.appender;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.logstash.logback.fieldnames.LogstashFieldNames;
 
@@ -8,6 +9,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 public class LogstashAppenderFactoryHelper {
+  private static final ObjectMapper objectMapper = new ObjectMapper();
+
   public static LogstashFieldNames getFieldNamesFromHashMap(HashMap<String, String> map) {
     LogstashFieldNames fieldNames = new LogstashFieldNames();
 
@@ -31,10 +34,12 @@ public class LogstashAppenderFactoryHelper {
     return fieldNames;
   }
 
-  public static String getCustomFieldsFromHashMap(HashMap<String, String> map) throws IOException {
-    StringWriter writer = new StringWriter();
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.writeValue(writer, map);
-    return writer.toString();
+  public static String getCustomFieldsFromHashMap(HashMap<String, String> map, String applicationName) {
+    try {
+      map.putIfAbsent("applicationName", applicationName);
+      return objectMapper.writeValueAsString(map);
+    } catch (JsonProcessingException e) {
+      return "{}";
+    }
   }
 }
