@@ -8,7 +8,7 @@ import ch.qos.logback.core.net.SyslogConstants;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.logstash.logback.appender.LogstashSocketAppender;
 
-import java.io.IOException;
+import java.util.HashMap;
 
 @JsonTypeName("logstash-socket")
 public class LogstashSocketAppenderFactory extends AbstractLogstashAppenderFactory {
@@ -29,9 +29,12 @@ public class LogstashSocketAppenderFactory extends AbstractLogstashAppenderFacto
     appender.setIncludeContext(includeContext);
     appender.setIncludeMdc(includeMdc);
 
-    if (customFields != null) {
-      appender.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields, applicationName));
+    if (customFields == null) {
+      customFields = new HashMap<>();
     }
+
+    customFields.putIfAbsent("applicationName", applicationName);
+    appender.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields));
 
     if (fieldNames != null) {
       appender.setFieldNames(LogstashAppenderFactoryHelper.getFieldNamesFromHashMap(fieldNames));

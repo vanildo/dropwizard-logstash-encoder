@@ -11,7 +11,7 @@ import net.logstash.logback.encoder.LogstashEncoder;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.io.IOException;
+import java.util.HashMap;
 
 @JsonTypeName("logstash-tcp")
 public class LogstashTcpAppenderFactory extends AbstractLogstashAppenderFactory {
@@ -59,9 +59,12 @@ public class LogstashTcpAppenderFactory extends AbstractLogstashAppenderFactory 
     encoder.setIncludeContext(includeContext);
     encoder.setIncludeMdc(includeMdc);
 
-    if (customFields != null) {
-      encoder.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields, applicationName));
+    if (customFields == null) {
+      customFields = new HashMap<>();
     }
+
+    customFields.putIfAbsent("applicationName", applicationName);
+    encoder.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields));
 
     if (fieldNames != null) {
       encoder.setFieldNames(LogstashAppenderFactoryHelper.getFieldNamesFromHashMap(fieldNames));

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.logstash.logback.fieldnames.LogstashFieldNames;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashMap;
 
 public class LogstashAppenderFactoryHelper {
@@ -34,9 +32,8 @@ public class LogstashAppenderFactoryHelper {
     return fieldNames;
   }
 
-  public static String getCustomFieldsFromHashMap(HashMap<String, String> map, String applicationName) {
+  public static String getCustomFieldsFromHashMap(HashMap<String, String> map) {
     try {
-      map.putIfAbsent("applicationName", applicationName);
       return objectMapper.writeValueAsString(map);
     } catch (JsonProcessingException e) {
       return "{}";
