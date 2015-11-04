@@ -6,13 +6,18 @@ This is needed because Dropwizard overwrites the default mechanism for loading l
 **NOTE**: This is an actively maintained fork that will closely track dropwizard releases. Currently 0.8.4 is targeted
 and once 0.9.0 emerges this will be updated as well.
 
+## Dropwizard Version Compatibility
+
+* dropwizard 0.8.4 => dropwizard-logstash-encoder 1.1.0
+* dropwizard 0.9.0 => dropwizard-logstash-encoder 1.2.0
+
 ## Installation
 Maven:
 ```xml
 <dependency>
   <groupId>com.larrymyers</groupId>
   <artifactId>dropwizard-logstash-encoder</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
