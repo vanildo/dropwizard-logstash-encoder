@@ -33,6 +33,14 @@ public class LogstashSocketAppenderFactory extends AbstractLogstashAppenderFacto
       customFields = new HashMap<>();
     }
 
+    if (prefix != null) {
+      appender.setPrefix(LogstashAppenderFactoryHelper.createPatternLayoutWithContext(prefix, context));
+    }
+
+    if (suffix != null) {
+      appender.setSuffix(LogstashAppenderFactoryHelper.createPatternLayoutWithContext(suffix, context));
+    }
+
     customFields.putIfAbsent("applicationName", applicationName);
     appender.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields));
 

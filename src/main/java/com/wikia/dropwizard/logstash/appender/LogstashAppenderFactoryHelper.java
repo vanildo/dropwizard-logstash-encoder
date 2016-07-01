@@ -1,5 +1,7 @@
 package com.wikia.dropwizard.logstash.appender;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.PatternLayout;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.logstash.logback.fieldnames.LogstashFieldNames;
@@ -38,5 +40,12 @@ public class LogstashAppenderFactoryHelper {
     } catch (JsonProcessingException e) {
       return "{}";
     }
+  }
+
+  public static PatternLayout createPatternLayoutWithContext(String pattern, LoggerContext context) {
+    PatternLayout layout = new PatternLayout();
+    layout.setContext(context);
+    layout.setPattern(pattern);
+    return layout;
   }
 }
