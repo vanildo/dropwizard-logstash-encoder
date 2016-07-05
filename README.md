@@ -42,6 +42,10 @@ All configs apply to both `logstash-socket` and `logstash-tcp`, unless otherwise
 * `fieldNames` - hashmap
 * `queueSize` - int - only valid for `logstash-tcp`
 * `includeCallerData` - bool - only valid for `logstash-tcp`
+* `prefix` - string - pattern written before the JSON object, only valid for `logstash-socket`
+* `suffix` - string - pattern written after the JSON object, only valid for `logstash-socket`
+
+For more information about prefixes and suffixes, please refer to [logstash-logback-encoder#prefixsuffix](https://github.com/logstash/logstash-logback-encoder/blob/master/README.md#prefixsuffix).
 
 Example config:
 ```yaml

@@ -26,6 +26,10 @@ abstract class AbstractLogstashAppenderFactory extends AbstractAppenderFactory {
 
   protected HashMap<String, String> fieldNames;
 
+  protected String prefix;
+
+  protected String suffix;
+
   @JsonProperty
   public void setHost(String host) {
     this.host = host;
@@ -94,5 +98,25 @@ abstract class AbstractLogstashAppenderFactory extends AbstractAppenderFactory {
   @JsonProperty
   public void setFieldNames(HashMap<String, String> fieldNames) {
     this.fieldNames = fieldNames;
+  }
+
+  @JsonProperty
+  public String getPrefix() {
+    return prefix;
+  }
+
+  @JsonProperty
+  public void setPrefix(String prefix) {
+    this.prefix = prefix;
+  }
+
+  @JsonProperty
+  public String getSuffix() {
+    return suffix;
+  }
+
+  @JsonProperty
+  public void setSuffix(String suffix) {
+    this.suffix = suffix;
   }
 }
