@@ -1,6 +1,8 @@
 package com.wikia.dropwizard.logstash.appender;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.dropwizard.logging.AbstractAppenderFactory;
 
 import javax.validation.constraints.Max;
@@ -8,7 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 
-abstract class AbstractLogstashAppenderFactory extends AbstractAppenderFactory {
+abstract class AbstractLogstashAppenderFactory extends AbstractAppenderFactory<ILoggingEvent> {
   @NotNull
   protected String host;
 

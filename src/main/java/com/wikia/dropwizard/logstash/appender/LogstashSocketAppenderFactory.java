@@ -1,56 +1,65 @@
 package com.wikia.dropwizard.logstash.appender;
 
+import java.util.HashMap;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.net.SyslogConstants;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 import net.logstash.logback.appender.LogstashSocketAppender;
-
-import java.util.HashMap;
 
 @JsonTypeName("logstash-socket")
 public class LogstashSocketAppenderFactory extends AbstractLogstashAppenderFactory {
-  public LogstashSocketAppenderFactory() {
-    port = SyslogConstants.SYSLOG_PORT;
-  }
+	public LogstashSocketAppenderFactory() {
+		port = SyslogConstants.SYSLOG_PORT;
+	}
 
-  @Override
-  public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
-    final LogstashSocketAppender appender = new LogstashSocketAppender();
+	@Override
+	public Appender<ILoggingEvent> build(LoggerContext context, String applicationName,
+			LayoutFactory<ILoggingEvent> layoutFactory, LevelFilterFactory<ILoggingEvent> levelFilterFactory,
+			AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
 
-    appender.setName("logstash-socket-appender");
-    appender.setContext(context);
-    appender.setHost(host);
-    appender.setPort(port);
+		final LogstashSocketAppender appender = new LogstashSocketAppender();
 
-    appender.setIncludeCallerData(includeCallerInfo);
-    appender.setIncludeContext(includeContext);
-    appender.setIncludeMdc(includeMdc);
+		appender.setName("logstash-socket-appender");
+		appender.setContext(context);
+		appender.setHost(host);
+		appender.setPort(port);
 
-    if (customFields == null) {
-      customFields = new HashMap<>();
-    }
+		appender.setIncludeCallerData(includeCallerInfo);
+		appender.setIncludeContext(includeContext);
+		appender.setIncludeMdc(includeMdc);
 
-    if (prefix != null) {
-      appender.setPrefix(LogstashAppenderFactoryHelper.createPatternLayoutWithContext(prefix, context));
-    }
+		// novo
+		appender.addFilter(levelFilterFactory.build(threshold));
+		getFilterFactories().stream().forEach(f -> appender.addFilter(f.build()));
 
-    if (suffix != null) {
-      appender.setSuffix(LogstashAppenderFactoryHelper.createPatternLayoutWithContext(suffix, context));
-    }
+		if (customFields == null) {
+			customFields = new HashMap<>();
+		}
 
-    customFields.putIfAbsent("applicationName", applicationName);
-    appender.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields));
+		if (prefix != null) {
+			appender.setPrefix(LogstashAppenderFactoryHelper.createPatternLayoutWithContext(prefix, context));
+		}
 
-    if (fieldNames != null) {
-      appender.setFieldNames(LogstashAppenderFactoryHelper.getFieldNamesFromHashMap(fieldNames));
-    }
+		if (suffix != null) {
+			appender.setSuffix(LogstashAppenderFactoryHelper.createPatternLayoutWithContext(suffix, context));
+		}
 
-    addThresholdFilter(appender, threshold);
-    appender.start();
+		customFields.putIfAbsent("applicationName", applicationName);
+		appender.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields));
 
-    return wrapAsync(appender);
-  }
+		if (fieldNames != null) {
+			appender.setFieldNames(LogstashAppenderFactoryHelper.getFieldNamesFromHashMap(fieldNames));
+		}
+
+		appender.start();
+
+		return wrapAsync(appender, asyncAppenderFactory);
+	}
 }

@@ -4,6 +4,10 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.Layout;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.logstash.logback.appender.LogstashTcpSocketAppender;
@@ -69,12 +73,50 @@ public class LogstashTcpAppenderFactory extends AbstractLogstashAppenderFactory 
     if (fieldNames != null) {
       encoder.setFieldNames(LogstashAppenderFactoryHelper.getFieldNamesFromHashMap(fieldNames));
     }
-
-    appender.setEncoder(encoder);
-    addThresholdFilter(appender, threshold);
-    encoder.start();
-    appender.start();
-
-    return wrapAsync(appender);
+//
+//    appender.setEncoder(encoder);
+//    encoder.start();
+//    appender.start();
+//
+//    return wrapAsync(appender);
+    return null;
   }
+
+	@Override
+	public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, LayoutFactory<ILoggingEvent> layoutFactory,
+		LevelFilterFactory<ILoggingEvent> levelFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
+		
+		final LogstashTcpSocketAppender appender = new LogstashTcpSocketAppender();
+	    final LogstashEncoder encoder = new LogstashEncoder();
+
+	    appender.setName("logstash-tcp-appender");
+	    appender.setContext(context);
+	    appender.addDestination(host + ":" + Integer.toString(port));
+	    appender.setIncludeCallerData(includeCallerData);
+	    appender.setQueueSize(queueSize);
+	    //novo
+	    appender.addFilter(levelFilterFactory.build(threshold));
+	    getFilterFactories().stream().forEach(f -> appender.addFilter(f.build()));
+
+	    encoder.setIncludeCallerData(includeCallerInfo);
+	    encoder.setIncludeContext(includeContext);
+	    encoder.setIncludeMdc(includeMdc);
+
+	    if (customFields == null) {
+	      customFields = new HashMap<>();
+	    }
+
+	    customFields.putIfAbsent("applicationName", applicationName);
+	    encoder.setCustomFields(LogstashAppenderFactoryHelper.getCustomFieldsFromHashMap(customFields));
+
+	    if (fieldNames != null) {
+	      encoder.setFieldNames(LogstashAppenderFactoryHelper.getFieldNamesFromHashMap(fieldNames));
+	    }
+	    
+		appender.setEncoder(encoder);
+		encoder.start();
+		appender.start();
+
+		return wrapAsync(appender, asyncAppenderFactory);
+	}
 }

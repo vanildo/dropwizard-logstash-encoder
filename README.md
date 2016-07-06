@@ -3,8 +3,7 @@
 [Dropwizard](http://dropwizard.io/) logging addon for sending logs using the [logstash-logback-encoder](https://github.com/logstash/logstash-logback-encoder). 
 This is needed because Dropwizard overwrites the default mechanism for loading logback configuration (logback.xml) in favor of its application.yml files.
 
-**NOTE**: This is an actively maintained fork that will closely track dropwizard releases. Currently 0.8.4 is targeted
-and once 0.9.0 emerges this will be updated as well.
+**NOTE**: This is a fork from larrymyers/dropwizard-logstash-encoder that will closely track dropwizard releases.
 
 ## Dropwizard Version Compatibility
 
