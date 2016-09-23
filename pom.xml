@@ -41,7 +41,7 @@
 
   <properties>
     <jackson.version>2.7.4</jackson.version>
-    <dropwizard.version>1.0.0-rc3</dropwizard.version>
+    <dropwizard.version>1.0.0-rc4</dropwizard.version>
     <logstash-logback-encoder.version>4.7</logstash-logback-encoder.version>
   </properties>
 
